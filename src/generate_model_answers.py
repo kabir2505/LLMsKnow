@@ -19,7 +19,7 @@ from probing_utils import load_model_and_validate_gpu, tokenize, generate, LIST_
 def parse_args():
     parser = argparse.ArgumentParser(description="A script for generating model answers and outputting to csv")
     parser.add_argument("--model",
-                        choices=LIST_OF_MODELS,
+                        # choices=LIST_OF_MODELS,
                         required=True)
     parser.add_argument("--dataset",
                         choices=LIST_OF_DATASETS)
@@ -212,7 +212,8 @@ def generate_model_answers(data, model, tokenizer, device, model_name, do_sample
             model_output = generate(model_input, model, model_name, do_sample, output_scores, max_new_tokens=max_new_tokens,
                                     top_p=top_p, temperature=temperature, stop_token_id=stop_token_id, tokenizer=tokenizer)
 
-        answer = tokenizer.decode(model_output['sequences'][0][len(model_input[0]):])
+        # answer = tokenizer.decode(model_output['sequences'][0][len(model_input[0]):])
+        answer = tokenizer.decode(model_output['sequences'][0][len(model_input[0]):], skip_special_tokens=True) #gpt2 does not have eos_token_id by default
         if output_scores:
             scores = torch.concatenate(model_output['scores']).cpu()  # shape = (new_tokens, len(vocab))
             all_scores.append(scores)

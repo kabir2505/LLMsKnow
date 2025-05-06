@@ -17,6 +17,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 N_LAYERS_MISTRAL = 32
 N_LAYER_LLAMA = 32
+N_LAYERS_GPT2 = 12  # GPT-2 Small has 12 layers
+
 
 LAYERS_TO_TRACE_MISTRAL = {
     'mlp': [f"model.layers.{i}.mlp" for i in range(N_LAYERS_MISTRAL)],
@@ -33,12 +35,24 @@ LAYERS_TO_TRACE_LLAMA = {
     'attention_heads': [f"model.layers.{i}.self_attn.o_proj" for i in range(N_LAYER_LLAMA)],
     'attention_output': [f"model.layers.{i}.self_attn.o_proj" for i in range(N_LAYER_LLAMA)],
 }
+###
+LAYERS_TO_TRACE_GPT2={
+  'mlp': [f"transfomer.h.{i}.mlp" for i in range(N_LAYERS_GPT2)],
+  'mlp_last_layer_only':[f"transformer.layers.{i}.mlp.c_proj" for i in range(N_LAYERS_GPT2)],
+  'mlp_last_layer_only_input': [f"transformer.layers.{i}.mlp.down_proj" for i in range(N_LAYERS_GPT2)],
+  'attention_heads': [f"transformer.layers.{i}.attn.c_proj" for i in range(N_LAYERS_GPT2)],
+  'attention_output': [f"transformer.layers.{i}.attn.c_proj" for i in range(N_LAYERS_GPT2)],
+
+}
+###
 
 LAYERS_TO_TRACE = {
     'mistralai/Mistral-7B-Instruct-v0.2': LAYERS_TO_TRACE_MISTRAL,
     'mistralai/Mistral-7B-v0.3': LAYERS_TO_TRACE_MISTRAL,
     'meta-llama/Meta-Llama-3-8B-Instruct': LAYERS_TO_TRACE_LLAMA,
     'meta-llama/Meta-Llama-3-8B': LAYERS_TO_TRACE_LLAMA,
+    'openai-community/gpt2':LAYERS_TO_TRACE_GPT2, ###
+
 }
 
 N_LAYERS = {
@@ -46,6 +60,7 @@ N_LAYERS = {
     'mistralai/Mistral-7B-v0.3': N_LAYERS_MISTRAL,
     'meta-llama/Meta-Llama-3-8B-Instruct': N_LAYER_LLAMA,
     'meta-llama/Meta-Llama-3-8B': N_LAYER_LLAMA,
+    'openai-community/gpt2':N_LAYERS_GPT2, ###
 }
 
 HIDDEN_SIZE = {
@@ -56,6 +71,7 @@ HIDDEN_SIZE = {
     'meta-llama/Meta-Llama-3-8B': 8192,
     'google/gemma-7b': 3072,
     'google/gemma-7b-it': 3072,
+    'openai-community/gpt2': 768 ###
 }
 
 LIST_OF_DATASETS = ['triviaqa',
@@ -75,6 +91,7 @@ LIST_OF_MODELS = ['mistralai/Mistral-7B-Instruct-v0.2',
                                             'mistralai/Mistral-7B-v0.3',
                                             'meta-llama/Meta-Llama-3-8B',
                                             'meta-llama/Meta-Llama-3-8B-Instruct',
+                                            'openai-community/gpt2' ###
                                             ]
 
 MODEL_FRIENDLY_NAMES = {
@@ -82,6 +99,7 @@ MODEL_FRIENDLY_NAMES = {
     'mistralai/Mistral-7B-v0.3': 'mistral-7b',
     'meta-llama/Meta-Llama-3-8B': 'llama-3-8b',
     'meta-llama/Meta-Llama-3-8B-Instruct': 'llama-3-8b-instruct',
+    'openai-community/gpt2':'gpt2' ###
 }
 
 LIST_OF_PROBING_LOCATIONS = ['mlp', 'mlp_last_layer_only', 'mlp_last_layer_only_input', 'attention_output']
